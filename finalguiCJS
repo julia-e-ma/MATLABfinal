@@ -1,0 +1,528 @@
+function finalguiCJS
+clc
+
+f = figure('Visible','on','Position',[400,50,750,600],'Name','Final GUI');
+ha=axes('Units','pixels','Position',[50 107 512 384]);
+
+% Button Position and Dimmensions
+xp = 590; %x position
+yp = linspace(10,570,23); % y positions for each button
+xv = 100; %x value
+yv = 25; %y value
+
+
+global rc
+rc = .5;
+global gc
+gc = 1;
+global bc
+bc = .5;
+
+
+set(f,'Color',[rc gc bc])
+
+%create push buttons
+Img=uicontrol('Style','pushbutton','String','Load Image','Position',[xp,yp(23),xv,yv],'Callback',{@Imgbutton_Callback});
+hsize=uicontrol('Style','pushbutton','String','Size','Position',[xp,yp(22),xv,yv],'Callback',{@sizebutton_Callback});
+htype=uicontrol('Style','pushbutton','String','Type','Position',[xp,yp(21),xv,yv],'Callback',{@typebutton_Callback});
+minmax=uicontrol('Style','pushbutton','String','Min/Max','Position',[xp,yp(20),xv,yv],'Callback',{@minmax_Callback});
+Rotp90=uicontrol('Style','pushbutton','String','Rotate 90 Degrees','Position',[xp,yp(19),xv,yv],'Callback',{@p90button_Callback});
+Rotn90=uicontrol('Style','pushbutton','String','Rotate -90 Degrees','Position',[xp,yp(18),xv,yv],'Callback',{@n90button_Callback});
+pfliplr=uicontrol('Style','pushbutton','String','Mirror Horizontal','Position',[xp,yp(17),xv,yv],'Callback',{@pfliplrbutton_Callback});
+pflipud=uicontrol('Style','pushbutton','String','Mirror Vertical','Position',[xp,yp(16),xv,yv],'Callback',{@pflipudbutton_Callback});
+Inverse=uicontrol('Style','pushbutton','String','Inverse','Position',[xp,yp(15),xv,yv],'Callback',{@inversebutton_Callback});
+grayscale=uicontrol('Style','pushbutton','String','Grayscale','Position',[xp,yp(14),xv, yv],'Callback',{@grayscalebutton_Callback});
+inversegray=uicontrol('Style','pushbutton','String','Inverse Gray','Position',[xp,yp(13),xv,yv],'Callback',{@inversegraybutton_Callback});
+threshold=uicontrol('Style','pushbutton','String','Threshold','Position',[xp,yp(12),xv,yv],'Callback',{@thresholdbutton_Callback});
+crop=uicontrol('Style','pushbutton','String','Crop','Position',[xp,yp(11),xv,yv],'Callback',{@cropbutton_Callback});
+profile=uicontrol('Style','pushbutton','String','Profile','Position',[xp,yp(10),xv,yv],'Callback',{@profilebutton_Callback});
+edges=uicontrol('Style','pushbutton','String','Edges','Position',[xp,yp(9),xv,yv],'Callback',{@edgesbutton_Callback});
+fuzzy=uicontrol('Style','pushbutton','String','Low Pass Filter', 'Position', [xp,yp(8),xv,yv],'Callback',{@lowpassbutton_Callback});
+sharp=uicontrol('Style','pushbutton','String','High Pass Filter','Position',[xp,yp(7),xv,yv],'Callback',{@highpassbutton_Callback});
+blur=uicontrol('Style','pushbutton','String','Blur','Position',[xp,yp(6),xv,yv],'Callback',{@blurbutton_Callback});
+deblur=uicontrol('Style','pushbutton','String','Deblur','Position',[xp,yp(5),xv,yv],'Callback',{@deblurbutton_Callback});
+noise=uicontrol('Style','pushbutton','String','Noise','Position',[xp,yp(4),xv,yv],'Callback',{@noisebutton_Callback});
+median=uicontrol('Style','pushbutton','String','Cancel Noise','Position',[xp,yp(3),xv,yv],'Callback',{@medianbutton_Callback});
+meme=uicontrol('Style','pushbutton','String','Meme','Position',[xp,yp(2),xv,yv],'Callback',{@memebutton_Callback});
+textbox=uicontrol('Style','pushbutton','String','TextBox','Position',[xp,yp(1),xv,yv],'Callback',{@textboxbutton_Callback});
+
+help=uicontrol('Style','pushbutton','String','Help','Position',[10,570,60,yv],'Callback',{@helpbutton_Callback});
+reset=uicontrol('Style','pushbutton','String','Reset','Position',[10 510 60 yv],'Callback',{@ResetCallback});
+
+popup=uicontrol('Style','pushbutton','String','RGB','Position',[10 540 60 yv],'Callback',{@PopupCallback});
+
+%create slider
+brighttext = uicontrol('Style','text','String','Slide to Change Brightness','Position',[50,50,512,25],'BackgroundColor',[rc gc bc]);
+slider = uicontrol('Style','slider','Position',[50,30,512,25],'Value',.5,'Callback',{@brightnessslider_Callback});
+set([f,Img,Rotp90,Rotn90,hsize,htype,pfliplr,pflipud,Inverse,grayscale,inversegray,threshold,crop,profile,edges,slider,meme],'Units','normalized')
+
+%%% SLIDER PROGRAMMING %%%
+
+    function brightnessslider_Callback(hObject,eventdata,handles)
+        
+        cl = 0;
+        EE = double(rgb2gray(I));
+        EE2 = EE/max(EE(:));
+        S = get(hObject,'Value');
+        I_out=S*5*log(1+EE2);
+        imshow(I_out)
+        
+    end
+
+%%% PUSH BUTTON PROGRAMMING %%%
+
+    function Imgbutton_Callback(source,eventdata)
+        imnum=imnum+1;
+        if imnum ==6
+            imnum=1;
+        end
+        clc
+        sprintf('Image Number %d',imnum)
+        if imnum==1
+            g=imread('peppers.png');
+        elseif imnum==2
+            g=imread('football.jpg');
+        elseif imnum==3
+            g=imread('pears.png');
+        elseif imnum == 4
+            g=imread('concordaerial.png');
+        elseif imnum == 5
+            g=imread('example.tif');
+        end
+        cl = 1;
+        ig = 1;
+        rl = 0;
+        ud = 0;
+        I = g;
+        wow = 'New Image!';
+        htext = uicontrol('Style','text','String',wow,'Position',[txp,typ,txv,tyv],'BackgroundColor',[rc gc bc]);
+        set(htext,'FontSize',12,'FontName','Cambria')
+        imshow(I)
+    end
+
+    function p90button_Callback(source,eventdata)
+        %rotate image 90 deg
+        I=imrotate(I,90);
+        imshow(I)
+    end
+
+    function n90button_Callback(source,eventdata)
+        % rotate image -90 deg
+        I=imrotate(I,-90);
+        imshow(I)
+    end
+
+    function pfliplrbutton_Callback(source,eventdata)
+        I=fliplr(I);
+        imshow(I)
+        rl=(~rl)*1;
+    end
+
+    function pflipudbutton_Callback(source,eventdata)
+        I=flipud(I);
+        imshow(I)
+        ud=(~ud)*1;
+    end
+
+    function inversebutton_Callback(source,eventdata)
+        %finds complement of image and displays it
+        I=imcomplement(I);
+        imshow(I)
+    end
+
+    function grayscalebutton_Callback(source,eventdata)
+        cl=(~cl)*1;
+        if cl == 1
+            %if image is already gray, switch to colored
+            if rl==1
+                %flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    I=fliplr(I);
+                    imshow(I);
+                elseif ud==0
+                    %rightside up
+                    I = g;
+                    I=fliplr(I);
+                    imshow(I);
+                end
+            elseif rl==0
+                %NOT flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    imshow(I);
+                elseif ud==0
+                    %rightside up
+                    I = g;
+                    imshow(I);
+                end
+            end
+        elseif cl==0
+            %if image is already color, switch to grayscale
+            if rl==1
+                %flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    I=fliplr(I);
+                    I=rgb2gray(I);
+                    imshow(I);
+                elseif ud==0
+                    %rightside up
+                    I = g;
+                    I=fliplr(I);
+                    I=rgb2gray(I);
+                    imshow(I);
+                end
+            elseif rl==0
+                %NOT flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    I=rgb2gray(I);
+                    imshow(I);
+                elseif ud==0
+                    %                     I = g;
+                    I=rgb2gray(I);
+                    imshow(I);
+                end
+            end
+        end
+    end
+
+    function inversegraybutton_Callback(source,eventdata)
+        % Display contour plot of the currently selected data.
+        ig=(~ig)*1;
+        if ig == 1
+            %if image is already gray, switch to colored
+            if rl==1
+                %flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    I=fliplr(I);
+                    imshow(I);
+                elseif ud==0
+                    %rightside up
+                    I = g;
+                    I=fliplr(I);
+                    imshow(I);
+                end
+            elseif rl==0
+                %NOT flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    imshow(I);
+                elseif ud==0
+                    %rightside up
+                    I = g;
+                    imshow(I);
+                end
+            end
+        elseif ig==0
+            %if image is already color, switch to grayscale
+            if rl==1
+                %flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    I=fliplr(I);
+                    I=imcomplement(I);
+                    I=rgb2gray(I)
+                    imshow(I);
+                elseif ud==0
+                    %rightside up
+                    I = g;
+                    I=fliplr(I);
+                    I=imcomplement(I);
+                    I=rgb2gray(I);
+                    imshow(I);
+                end
+            elseif rl==0
+                %NOT flipped horizontally
+                if ud==1
+                    %upside down
+                    I = g;
+                    I=flipud(I);
+                    I=imcomplement(I);
+                    I=rgb2gray(I);
+                    imshow(I);
+                elseif ud==0
+                    %rightside up
+                    I = g;
+                    I=imcomplement(I);
+                    I=rgb2gray(I);
+                    imshow(I);
+                end
+            end
+        end
+    end
+
+    function thresholdbutton_Callback(source,eventdata)
+%         thresh=input('Enter the threshold pixel between 0 and 255: ');
+%         I=rgb2gray(I);
+%         BW=imbinarize(I,(thresh/255));
+%         imshow(BW)
+% The method in green represents how we would use imbinarize() to threshold
+% the image. This includes allowing the user to input a pixel value
+        level = graythresh(I);
+        I = im2bw(I,level);
+        imshow(I)
+    end
+
+    function cropbutton_Callback(source,eventdata)
+        [I2, rect] = imcrop(I);
+        imshow(I2)
+        
+    end
+    function profilebutton_Callback(source,eventdata)
+        imshow(I)
+        improfile
+        
+    end
+
+    function edgesbutton_Callback(source,eventdata)
+        I=rgb2gray(I);
+        I=edge(I,'Canny');
+        imshow(I)
+        
+    end
+    function lowpassbutton_Callback(source, eventdata)
+        blank = ' ';
+        htext = uicontrol('Style','text','String',blank,'Position',[txp,typ,txv,tyv]);
+        htext = uicontrol('Style','text','String','Check Command Window','Position',[txp,typ,txv,tyv],'BackgroundColor',[rc gc bc]);
+        set(htext,'FontSize',12,'FontName','Cambria')
+        radius=input('Enter a radius for the disk filter: ');
+        F=fspecial('disk',radius);
+        I=imfilter(I, F,'replicate');
+        imshow(I)
+    end
+
+    function highpassbutton_Callback(source, eventdata)
+        F2=fspecial('unsharp');
+        I=imfilter(I, F2,'replicate');
+        imshow(I)
+    end
+
+    function blurbutton_Callback(source, eventdata)
+        blank = ' ';
+        htext = uicontrol('Style','text','String',blank,'Position',[txp,typ,txv,tyv]);
+        htext = uicontrol('Style','text','String','Check Command Window','Position',[txp,typ,txv,tyv],'BackgroundColor',[rc gc bc]);
+        set(htext,'FontSize',12,'FontName','Cambria')
+        len=input('Enter length in pixels: ');
+        theta=input('Enter angle: ');
+        PSF=fspecial('motion', len, theta);
+        I=imfilter(I, PSF,'replicate');
+        imshow(I)
+    end
+    function deblurbutton_Callback(source, eventdata)
+       deblurSigma = 100;
+       motion_noise = fspecial('gaussian', 25,deblurSigma);
+       I = deconvlucy(I,motion_noise);
+       imshow(I);
+       set(htext,'FontSize',12,'FontName','Cambria','String','We are sorry.  We tried everything :(')
+    end
+    function noisebutton_Callback(~,eventdata)
+        if cl == 0
+%             I=rgb2gray(I);
+            I=imnoise(I,'salt & pepper');
+            imshow(I)
+        elseif cl == 1
+            set(htext,'FontName','Cambria','FontSize',12,'String','Image Must be Grayscale first')
+        end
+    end
+    function medianbutton_Callback(source,eventdata)
+        I=medfilt2(I);
+        imshow(I)
+    end
+    function memebutton_Callback(source,eventdata)
+        num=menu('Select your meme theme:','Metro Boomin','Miley','Spongebob','male');
+        if num==1
+            YourText=sprintf('If young metro dont trust you');
+        elseif num==2
+            YourText=sprintf('I came in like a wrecking ball');
+        elseif num==3
+            YourText=sprintf('Is mayonaise an instrument');
+        else
+            YourText=sprintf('BOI');
+        end
+        imshow(I);
+        hText = text(25,25,YourText,'Color',[1 1 0],'FontSize',20);
+    end
+function ResetCallback(source,eventdata)
+        I=g;
+        imshow(I)
+        rl = 0;
+        ud = 0;
+        cl = 1;
+        ig = 1;
+        set(htext,'FontSize',12,'FontName','Cambria','String','Image Reset')
+    end
+
+    function textboxbutton_Callback(source,eventdata)
+        mTextBox = uicontrol('style','text');
+        x=input('Enter text','s');
+        set(mTextBox,'String',x);
+        mTextBoxPosition = get(mTextBox,'Position');
+        set(mTextBox,'Units','characters');
+        imshow(I)
+    end
+
+% Text Position and Dimmentions
+txp = 130; %x position
+typ = 515; % y positions for each button
+txv = 360; %x value
+tyv = 50;  %y value
+
+    function sizebutton_Callback(source,eventdata)
+        %find and display size of image
+        [y1,x1,z1]=size(I);
+        global st
+        st = sprintf('Size of image: y = %d, x = %d, z = %d%s\n',y1,x1,z1');
+        blank = ' ';
+        htext = uicontrol('Style','text','String',blank,'Position',[txp,typ,txv,tyv]);
+        htext = uicontrol('Style','text','String',st,'Position',[txp,typ,txv,tyv],'BackgroundColor',[rc gc bc]);
+        set(htext,'FontSize',12,'FontName','Cambria')
+        tx = 3;
+    end
+
+    function typebutton_Callback(source,eventdata)
+        clc
+        blank = ' ';
+        htext = uicontrol('Style','text','String',blank,'Position',[txp,typ,txv,tyv]);
+        htext = uicontrol('Style','text','String','Check Command Window','Position',[txp,typ,txv,tyv],'BackgroundColor',[rc gc bc]);
+        set(htext,'FontSize',12,'FontName','Cambria')
+        whos I
+        tx = 2;
+    end
+
+    function minmax_Callback(source,eventdata)
+        MaxVal = max(I(:));
+        MinVal = min(I(:));
+        global mmt
+        mmt = sprintf('The minimum pixel value is %d, and the maximum pixel value is %d',MinVal,MaxVal);
+        blank = ' ';
+        htext = uicontrol('Style','text','String',blank,'Position',[txp,typ,txv,tyv]);
+        htext = uicontrol('Style','text','String',mmt,'Position',[txp,typ,txv,tyv],'BackgroundColor',[rc gc bc]);
+        set(htext,'FontSize',12,'FontName','Cambria')
+        tx = 1;
+    end
+
+    function helpbutton_Callback(source,eventdata)
+        h=msgbox({'HELP'...
+            'Click Load Image to begin, and to load a new image at any time'...
+            ' '...
+            'Click Reset at any time to reset the image you are working with.'...
+            ' '...
+            'Grayscale will turn the image into a black and white image. If you click this button again it will remove the grayscale filter.'...
+            ' '...
+            'To crop the image, click the Crop button. Your cursor will become a cross. Drag the cross over the desired area of the picture and adjust as necessary. Once the desired area of the image is selected, double click inside the crop rectangle.'...
+            ' '...
+            'To find the color profile of the image, click Profile. Again, your cursor will become a cross. Select an area of the image by clicking to create line segments. Once the desired area is selected, double click inside the area to reveal a graph of the color profile.' ...
+            ' '...
+            'Edges will display the edges of the objects in the photo in white. Be sure to only use color images for this button.'...
+            ' '...
+            'Low Pass Filter and Blur both have input parameters. Check the command window to choose these parameters.'...
+            ' '...
+            'The slider at the bottom is meant for changing the brightness. Slide to the right to make the image brighter, slide to the left to make the image darker. '...
+            ' '...
+            'To meme the image, select the Meme button and choose a theme from the pop up menu'...
+            ' '...
+            'To add a textbox to the image, select Textbox and enter the desired text in the Command Window. Click enter and then in the GUI toolbox, click the white arrow pointer. Drag the textbox where desired. When you are done moving the textbox, click the hand tool in the GUI toolbox.'...
+            ' '...
+            'To change the GUI color, click RGB. Use the sliders to adjust the color and exit the pop up window when the desired color is reached.'...
+            });
+    end
+
+global rl
+global ud
+global cl
+global ig
+global I
+global g
+global tx
+global htext
+global imnum
+global len
+global theta
+imnum=0;
+global radius
+
+    function PopupCallback(source,eventdata)
+        
+        handles.figure = figure('Position',[50 100 380 140],'Color',[rc gc bc],'Name','Color Editor');
+        handles.Slider1 = uicontrol('Style','slider','Position',[30 90 200 25],'Callback',{@SliderCallback1});
+        handles.Slider2 = uicontrol('Style','slider','Position',[30 55 200 25],'Callback',{@SliderCallback2});
+        handles.Slider3 = uicontrol('Style','slider','Position',[30 20 200 25],'Callback',{@SliderCallback3});
+        handles.Text1 = uicontrol('Style','Text','Position',[240 90 100 25],'String','Red: 0.00');
+        handles.Text2 = uicontrol('Style','Text','Position',[240 55 100 25],'String','Green: 0.00');
+        handles.Text3 = uicontrol('Style','Text','Position',[240 20 100 25],'String','Blue: 0.00');
+        
+        set(handles.Slider1,'Value',rc);
+        set(handles.Slider2,'Value',gc);
+        set(handles.Slider3,'Value',bc);
+        
+        global RedValue
+        RedValue = rc;
+        global GreenValue
+        GreenValue = gc;
+        global BlueValue
+        BlueValue = bc;
+        
+        red = sprintf('Red: %4.2f',RedValue);
+        set(handles.Text1,'String',red)
+        green = sprintf('Green: %4.2f',GreenValue);
+        set(handles.Text2,'String',green)
+        blue = sprintf('Blue: %4.2f',BlueValue);
+        set(handles.Text3,'String',blue)
+        
+        function SliderCallback1(~,~)
+            RedValue = get(handles.Slider1,'Value');
+            rc = RedValue;
+            gc = GreenValue;
+            bc = BlueValue;
+            set(f,'Color',[rc gc bc])
+            set(handles.figure,'Color',[RedValue GreenValue BlueValue]);
+            red = sprintf('Red: %4.2f',RedValue);
+            set(handles.Text1,'String',red)
+            set(htext,'BackgroundColor',[RedValue GreenValue BlueValue])
+            set(brighttext,'BackgroundColor',[rc gc bc]);
+        end
+        
+        function SliderCallback2(~,~)
+            GreenValue = get(handles.Slider2,'Value');
+            rc = RedValue;
+            gc = GreenValue;
+            bc = BlueValue;
+            set(f,'Color',[rc gc bc])
+            set(handles.figure,'Color',[RedValue GreenValue BlueValue])
+            green = sprintf('Green: %4.2f',GreenValue);
+            set(handles.Text2,'String',green)
+            set(htext,'BackgroundColor',[RedValue GreenValue BlueValue])
+            set(brighttext,'BackgroundColor',[rc gc bc]);
+        end
+        
+        function SliderCallback3(~,~)
+            BlueValue = get(handles.Slider3,'Value');
+            rc = RedValue;
+            gc = GreenValue;
+            bc = BlueValue;
+            set(f,'Color',[rc gc bc])
+            set(handles.figure,'Color',[RedValue GreenValue BlueValue])
+            blue = sprintf('Blue: %4.2f',BlueValue);
+            set(handles.Text3,'String',blue)
+            set(htext,'BackgroundColor',[RedValue GreenValue BlueValue])
+            set(brighttext,'BackgroundColor',[rc gc bc]);
+        end
+    end
+end
