@@ -1,6 +1,7 @@
 function finalguiCJS
 clc
 
+% Create GUI Window
 f = figure('Visible','on','Position',[400,50,750,600],'Name','Final GUI');
 ha=axes('Units','pixels','Position',[50 107 512 384]);
 
@@ -21,7 +22,7 @@ bc = .5;
 
 set(f,'Color',[rc gc bc])
 
-%create push buttons
+% Create push buttons
 Img=uicontrol('Style','pushbutton','String','Load Image','Position',[xp,yp(23),xv,yv],'Callback',{@Imgbutton_Callback});
 hsize=uicontrol('Style','pushbutton','String','Size','Position',[xp,yp(22),xv,yv],'Callback',{@sizebutton_Callback});
 htype=uicontrol('Style','pushbutton','String','Type','Position',[xp,yp(21),xv,yv],'Callback',{@typebutton_Callback});
